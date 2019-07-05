@@ -27,6 +27,6 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'junit:junit:4.12'
     compile 'io.jsonwebtoken:jjwt:0.6.0'
-    
+    implementation 'org.junit.jupiter:junit-jupiter-api'
 
 }
