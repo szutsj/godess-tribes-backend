@@ -115,12 +115,15 @@ public class BuildingService {
   }
 
   public Building createBuilding(Kingdom kingdom, String type) {
-    Building building = buildingFactory.getBuilding(type, kingdom);
-    Resource goldResource = resourceRepository.findResourceByTownhall_Kingdom_IdAndType(kingdom.getId(), ResourceTypeENUM.GOLD).get();
-    int newGoldAmount = goldResource.getAmount() - Building.CREATION_COST;
-    goldResource.setAmount(newGoldAmount);
-    goldResource.setUpdateTime(LocalDateTime.now());
-    resourceRepository.save(goldResource);
+    Building building =  null;
+    if (buildingFactory.getBuilding(type, kingdom) != null) {
+      building = buildingRepository.save(buildingFactory.getBuilding(type, kingdom));
+      Resource goldResource = resourceRepository.findResourceByTownhall_Kingdom_IdAndType(kingdom.getId(), ResourceTypeENUM.GOLD).get();
+      int newGoldAmount = goldResource.getAmount() - Building.CREATION_COST;
+      goldResource.setAmount(newGoldAmount);
+      goldResource.setUpdateTime(LocalDateTime.now());
+      resourceRepository.save(goldResource);
+    }
 
     return building;
   }
