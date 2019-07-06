@@ -5,6 +5,7 @@ import com.greenfoxacademy.goddesstribesbackend.models.ResourceTypeENUM;
 import com.greenfoxacademy.goddesstribesbackend.models.dtos.BuildingDTO;
 import com.greenfoxacademy.goddesstribesbackend.models.dtos.BuildingsDTO;
 import com.greenfoxacademy.goddesstribesbackend.models.entities.*;
+import com.greenfoxacademy.goddesstribesbackend.models.entities.buildingFactory.BuildingFactory;
 import com.greenfoxacademy.goddesstribesbackend.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,12 +25,13 @@ public class BuildingService {
   private ResourceRepository resourceRepository;
   private TownhallRepository townhallRepository;
   private ProductionBuildingRepository productionBuildingRepository;
+  private BuildingFactory buildingFactory;
 
   @Autowired
   public BuildingService(KingdomRepository kingdomRepository, BuildingRepository buildingRepository,
                          FarmRepository farmRepository, MineRepository mineRepository,
                          ResourceRepository resourceRepository, TownhallRepository townhallRepository,
-                         ProductionBuildingRepository productionBuildingRepository) {
+                         ProductionBuildingRepository productionBuildingRepository, BuildingFactory buildingFactory) {
     this.kingdomRepository = kingdomRepository;
     this.buildingRepository = buildingRepository;
     this.farmRepository = farmRepository;
@@ -37,6 +39,7 @@ public class BuildingService {
     this.resourceRepository = resourceRepository;
     this.townhallRepository = townhallRepository;
     this.productionBuildingRepository = productionBuildingRepository;
+    this.buildingFactory = buildingFactory;
   }
 
   public boolean isValidBuildingType(String type) {
@@ -112,18 +115,7 @@ public class BuildingService {
   }
 
   public Building createBuilding(Kingdom kingdom, String type) {
-    Building building;
-
-    if (type.equalsIgnoreCase(BuildingTypeENUM.FARM.toString())) {
-      building = buildingRepository.save(new Farm(kingdom));
-    } else if (type.equalsIgnoreCase(BuildingTypeENUM.MINE.toString())) {
-      building = buildingRepository.save(new Mine(kingdom));
-    } else if (type.equalsIgnoreCase(BuildingTypeENUM.BARRACK.toString())) {
-      building = buildingRepository.save(new Barrack(kingdom));
-    } else {
-      building = null;
-    }
-
+    Building building = buildingFactory.getBuilding(type, kingdom);
     Resource goldResource = resourceRepository.findResourceByTownhall_Kingdom_IdAndType(kingdom.getId(), ResourceTypeENUM.GOLD).get();
     int newGoldAmount = goldResource.getAmount() - Building.CREATION_COST;
     goldResource.setAmount(newGoldAmount);
