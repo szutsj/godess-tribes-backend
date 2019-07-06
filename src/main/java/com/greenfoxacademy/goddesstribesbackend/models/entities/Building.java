@@ -1,12 +1,13 @@
 package com.greenfoxacademy.goddesstribesbackend.models.entities;
 
 import com.greenfoxacademy.goddesstribesbackend.models.BuildingTypeENUM;
+import com.greenfoxacademy.goddesstribesbackend.models.entities.buildingFactory.BuildingType;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-public abstract class Building {
+public abstract class Building implements BuildingType {
 
   public static final int MAX_LEVEL = 3;
   private static final int START_LEVEL = 1;
